@@ -46,8 +46,7 @@ public class GETransactionExporterPlugin extends Plugin
 		{
 			try
 			{
-				OfferTracker newTracker = new OfferTracker(new FileStateStore(gson, getPluginDirectory()),
-					id -> itemManager.getItemComposition(id).getName());
+				OfferTracker newTracker = new OfferTracker(new FileStateStore(gson, getPluginDirectory()));
 				TransactionExporter newExporter = new TransactionExporter(gson, httpClient, scheduler, config, newTracker, log);
 				tracker = newTracker;
 				exporter = newExporter;
@@ -72,7 +71,10 @@ public class GETransactionExporterPlugin extends Plugin
 	{
 		OfferTracker current = tracker;
 		if (current == null) return;
-		OfferSnapshot snapshot = OfferSnapshot.from(event.getSlot(), event.getOffer());
+		// GrandExchangeOfferChanged is delivered on the client thread. ItemManager
+		// cache access must stay here; the immutable snapshot is safe to persist later.
+		String itemName = itemManager.getItemComposition(event.getOffer().getItemId()).getName();
+		OfferSnapshot snapshot = OfferSnapshot.from(event.getSlot(), event.getOffer(), itemName);
 		long observed = System.currentTimeMillis();
 		scheduler.execute(() ->
 		{

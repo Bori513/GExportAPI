@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.IntFunction;
 import net.runelite.api.GrandExchangeOfferState;
 
 final class OfferTracker
@@ -16,13 +15,11 @@ final class OfferTracker
 	static final int MAX_PENDING = 256;
 	static final int MAX_DELIVERED = 4096;
 	private final StateStore store;
-	private final IntFunction<String> itemNames;
 	private final PersistedState state;
 
-	OfferTracker(StateStore store, IntFunction<String> itemNames) throws IOException
+	OfferTracker(StateStore store) throws IOException
 	{
 		this.store = store;
-		this.itemNames = itemNames;
 		this.state = store.load();
 	}
 
@@ -129,8 +126,7 @@ final class OfferTracker
 		event.offer_slot = offer.slot;
 		event.side = tracked.side;
 		event.item_id = offer.itemId;
-		String name = itemNames.apply(offer.itemId);
-		event.item_name = name == null ? "Unknown" : name;
+		event.item_name = offer.itemName == null || offer.itemName.isEmpty() ? "Unknown" : offer.itemName;
 		event.quantity = offer.quantity;
 		event.unit_price = offer.price;
 		event.total_coins = safeTotal(offer.quantity, offer.price);

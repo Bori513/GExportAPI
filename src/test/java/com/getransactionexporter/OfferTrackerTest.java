@@ -102,10 +102,10 @@ public class OfferTrackerTest
 		assertEquals(T / 1000, event.observed_at);
 	}
 
-	private OfferTracker tracker() throws IOException { return new OfferTracker(store, id -> "Coal"); }
+	private OfferTracker tracker() throws IOException { return new OfferTracker(store); }
 	private OfferSnapshot o(int slot, GrandExchangeOfferState state, int quantity)
 	{
-		return new OfferSnapshot(slot, state, 453, quantity, 10, 150);
+		return new OfferSnapshot(slot, state, 453, quantity, 10, 150, "Coal");
 	}
 
 	private static final class MemoryStore implements StateStore
