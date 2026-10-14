@@ -11,10 +11,11 @@ final class OfferSnapshot
 	final int quantity;
 	final int totalQuantity;
 	final long price;
+	final long spent;
 	final String itemName;
 
 	OfferSnapshot(int slot, GrandExchangeOfferState state, int itemId, int quantity, int totalQuantity, long price,
-		String itemName)
+		long spent, String itemName)
 	{
 		this.slot = slot;
 		this.state = state;
@@ -22,12 +23,13 @@ final class OfferSnapshot
 		this.quantity = quantity;
 		this.totalQuantity = totalQuantity;
 		this.price = price;
+		this.spent = spent;
 		this.itemName = itemName;
 	}
 
 	static OfferSnapshot from(int slot, GrandExchangeOffer offer, String itemName)
 	{
 		return new OfferSnapshot(slot, offer.getState(), offer.getItemId(), offer.getQuantitySold(),
-			offer.getTotalQuantity(), offer.getPrice(), itemName);
+			offer.getTotalQuantity(), offer.getPrice(), offer.getSpent(), itemName);
 	}
 }

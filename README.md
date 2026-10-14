@@ -46,8 +46,8 @@ The durable queue is capped at 256 events and the state file at 2 MiB. If full, 
 | `side` | `BUY` or `SELL`. |
 | `item_id`, `item_name` | Cache item ID and name resolved locally through RuneLite's `ItemManager`. |
 | `quantity` | Quantity RuneLite reports bought or sold at terminal observation. |
-| `unit_price` | The offer's configured per-item price reported by RuneLite; it is not claimed to be an exact average execution price. |
-| `total_coins` | `quantity × unit_price`, calculated as an overflow-checked `long`; it is a derived offer-value figure, not a claim about exact coins settled. |
+| `unit_price` | Actual average settlement price: RuneLite's cumulative coins exchanged divided by filled quantity. If fills occurred at different prices, integer division truncates any fractional average. |
+| `total_coins` | Actual cumulative coins spent or received as reported by RuneLite, stored as a `long`. |
 | `offer_state` | `COMPLETED` or `CANCELLED_PARTIAL`. |
 | `observed_at` | Unix seconds when this plugin first observed the active offer lifecycle. RuneLite does not expose the original offer creation time. |
 | `completed_at` | Unix seconds when this plugin observed the terminal state, not a server-authored exchange timestamp. |

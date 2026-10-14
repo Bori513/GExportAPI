@@ -80,6 +80,17 @@ public class OfferTrackerTest
 		catch (ArithmeticException expected) { }
 	}
 
+	@Test public void usesActualSettlementInsteadOfConfiguredOfferPrice() throws Exception
+	{
+		OfferTracker tracker = tracker();
+		tracker.observe(new OfferSnapshot(0, GrandExchangeOfferState.SELLING, 556, 0, 4, 4, 0, "Air rune"), T);
+		TransactionEvent event = tracker.observe(
+			new OfferSnapshot(0, GrandExchangeOfferState.SOLD, 556, 4, 4, 4, 20, "Air rune"), T + 1);
+		assertNotNull(event);
+		assertEquals(5L, event.unit_price);
+		assertEquals(20L, event.total_coins);
+	}
+
 	@Test public void queuePersistsAndReloads() throws Exception
 	{
 		OfferTracker tracker = tracker();
@@ -105,7 +116,7 @@ public class OfferTrackerTest
 	private OfferTracker tracker() throws IOException { return new OfferTracker(store); }
 	private OfferSnapshot o(int slot, GrandExchangeOfferState state, int quantity)
 	{
-		return new OfferSnapshot(slot, state, 453, quantity, 10, 150, "Coal");
+		return new OfferSnapshot(slot, state, 453, quantity, 10, 150, quantity * 150L, "Coal");
 	}
 
 	private static final class MemoryStore implements StateStore

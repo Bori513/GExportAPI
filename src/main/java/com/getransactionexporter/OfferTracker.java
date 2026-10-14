@@ -128,14 +128,15 @@ final class OfferTracker
 		event.item_id = offer.itemId;
 		event.item_name = offer.itemName == null || offer.itemName.isEmpty() ? "Unknown" : offer.itemName;
 		event.quantity = offer.quantity;
-		event.unit_price = offer.price;
-		event.total_coins = safeTotal(offer.quantity, offer.price);
+		event.total_coins = offer.spent;
+		event.unit_price = actualAveragePrice(offer.quantity, offer.spent, offer.price);
 		event.offer_state = offer.state == GrandExchangeOfferState.BOUGHT || offer.state == GrandExchangeOfferState.SOLD
 			? "COMPLETED" : "CANCELLED_PARTIAL";
 		event.observed_at = tracked.observedAt;
 		event.completed_at = nowMillis / 1000L;
 		String identity = "1|" + tracked.generation + "|" + offer.slot + "|" + event.side + "|" + offer.itemId
-			+ "|" + offer.totalQuantity + "|" + offer.price + "|" + offer.quantity + "|" + event.offer_state + "|" + tracked.observedAt;
+			+ "|" + offer.totalQuantity + "|" + offer.price + "|" + offer.quantity + "|" + offer.spent
+			+ "|" + event.offer_state + "|" + tracked.observedAt;
 		event.event_id = sha256(identity);
 		return event;
 	}
@@ -144,6 +145,13 @@ final class OfferTracker
 	{
 		if (quantity < 0 || price < 0) throw new IllegalArgumentException("negative GE value");
 		return Math.multiplyExact(quantity, price);
+	}
+
+	static long actualAveragePrice(long quantity, long actualCoins, long fallbackOfferPrice)
+	{
+		if (quantity <= 0 || actualCoins < 0 || fallbackOfferPrice < 0)
+			throw new IllegalArgumentException("invalid GE value");
+		return actualCoins > 0 ? actualCoins / quantity : fallbackOfferPrice;
 	}
 
 	private static boolean isTerminal(GrandExchangeOfferState state)

@@ -85,8 +85,8 @@ public class TransactionExporterTest
 	private static OfferTracker queuedTracker(MemoryStore store) throws Exception
 	{
 		OfferTracker tracker = new OfferTracker(store);
-		tracker.observe(new OfferSnapshot(0, GrandExchangeOfferState.BUYING, 453, 0, 10, 150, "Coal"), 1000);
-		tracker.observe(new OfferSnapshot(0, GrandExchangeOfferState.BOUGHT, 453, 10, 10, 150, "Coal"), 2000);
+		tracker.observe(new OfferSnapshot(0, GrandExchangeOfferState.BUYING, 453, 0, 10, 150, 0, "Coal"), 1000);
+		tracker.observe(new OfferSnapshot(0, GrandExchangeOfferState.BOUGHT, 453, 10, 10, 150, 1500, "Coal"), 2000);
 		return tracker;
 	}
 
